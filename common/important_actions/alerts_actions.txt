@@ -1,0 +1,1304 @@
+﻿
+action_acquired_construction_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    every_held_title = {
+      limit = { always = no tier = tier_county }
+      every_county_province = {
+        limit = {
+          OR = { 
+            county = { recent_history = { days = 5 } }
+            AND = {
+              NOT = { county = { recent_history = { days = 5 } } }
+              barony = {
+                previous_owner = {
+                  is_alive = no
+                  time_since_death < 5
+                }
+                title_held_years = 0
+  #              recent_history = { days = 5 } 
+              }
+            }
+          }
+          has_ongoing_construction = yes 
+        }
+#        debug_log = "*** province ***"
+#        debug_log_scopes = no
+        barony = { save_scope_as = province }
+        try_create_important_action = {
+          important_action_type = action_acquired_construction_alert
+          actor = root
+        }
+      }
+    }
+  }
+  effect = {
+    scope:actor = {
+      open_view_data = {
+        view = holding_view
+        province = scope:province
+      }
+    }
+  }
+}
+
+action_can_join_finishing_war_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    every_ruler = {
+      limit = { is_at_war = yes }
+
+      save_scope_as = recipient
+
+      every_character_war = {
+        limit = { 
+          is_war_leader = scope:recipient                             
+          NOT = { any_war_participant = { this = scope:actor } }                 # not already in the war
+          OR = { attacker_war_score > 99 attacker_war_score < -99 }
+        }
+        save_scope_as = war
+
+        if = {
+          limit = { scope:actor = { is_character_interaction_valid = { recipient = scope:recipient interaction = join_war_interaction } } }
+
+          if = {
+            limit = { scope:war = { primary_attacker = scope:recipient } }
+            scope:war = { primary_defender = { save_scope_as = secondary_recipient } }
+          }
+          else = {
+            scope:war = { primary_attacker = { save_scope_as = secondary_recipient } }
+          }          
+          try_create_important_action = {
+            important_action_type = action_can_join_finishing_war_alert
+            actor = scope:actor
+            recipient = scope:recipient
+            secondary_recipient = scope:secondary_recipient
+          }
+        }
+      }
+    }
+  }
+  effect = {
+    open_interaction_window = {
+      interaction = join_war_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+      secondary_recipient = scope:recipient
+    }
+  }
+}
+
+action_can_request_promote_legend_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    if = {
+      limit = {
+        NOT = { has_character_flag = cmn_requested_promote_legend } 
+        any_living_character = { 
+          scope:actor = { 
+            is_character_interaction_potentially_accepted = {
+              recipient = prev 
+              interaction = ce1_ask_to_promote_legend_interaction
+            }
+          }
+        }
+      }
+      try_create_important_action = {
+        important_action_type = action_can_request_promote_legend_alert
+        actor = root
+      }
+    }
+  }
+  effect = {
+    yyz_legendPromoter_effect = yes
+  }
+}
+
+action_moving_army_has_no_organizer_alert = {
+  type = alert
+
+  check_create_action = {
+    every_army = {
+      limit = { 
+        army_owner = root # scope:actor
+        army_is_moving = yes
+        army_commander ?= { NOT = { has_trait = organizer } }
+      }
+      save_scope_as = army
+      try_create_important_action = {
+        important_action_type = action_moving_army_has_no_organizer_alert
+        actor = root
+        recipient = scope:army
+      }
+    }
+  }
+
+  effect = {
+    scope:actor = { cmdr_initialize = yes }
+    if = {
+      limit = { NOT = { scope:actor = { exists = var:cmdr_army } } }
+      scope:army = { open_view_data = { view = select_commander } }          
+    }
+  }
+}
+
+action_sieging_army_has_no_military_engineer_alert = {
+  type = alert
+
+  check_create_action = {
+    every_army = {
+      limit = { 
+        army_owner = root # scope:actor
+        is_army_in_siege = yes
+        is_army_in_combat = no
+        army_is_moving = no
+        army_commander ?= { NOT = { has_trait = military_engineer } }
+      }
+      save_scope_as = army
+      try_create_important_action = {
+        important_action_type = action_sieging_army_has_no_military_engineer_alert
+        actor = root
+        recipient = scope:army
+      }
+    }
+  }
+
+  effect = {
+    pan_camera_to_province = scope:recipient.location
+    scope:actor = { cmdr_initialize = yes }
+    if = {
+      limit = { NOT = { scope:actor = { exists = var:cmdr_army } } }
+      scope:army = { open_view_data = { view = select_commander } }          
+    }
+  }
+}
+
+action_land_old_gold_alert = {
+  type = alert
+
+  check_create_action = {
+    every_courtier = {
+      limit = { 
+        has_character_flag = uimod_old_gold 
+        alert_has_curable_disease = no
+      }
+      try_create_important_action = {
+        important_action_type = action_land_old_gold_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = grant_titles_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+action_land_sick_gold_alert = {
+  type = alert
+
+  check_create_action = {
+    every_courtier = {
+      limit = { 
+        has_character_flag = uimod_old_gold 
+        alert_has_curable_disease = yes
+      }
+      try_create_important_action = {
+        important_action_type = action_land_sick_gold_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = grant_titles_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+
+action_old_gold_health_alert = {
+  type = alert
+
+  check_create_action = {
+    every_vassal = {
+      limit = { 
+        has_character_flag = uimod_old_gold 
+        OR = {
+          health > 2.9
+          AND = { gold < 20 highest_held_title_tier < 1 }
+        }
+      }
+      try_create_important_action = {
+        important_action_type = action_old_gold_health_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    scope:recipient = {
+      open_view_data = {
+        view = character
+        player = scope:actor
+      }
+    }
+  }
+}
+
+action_low_tyranny_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    if = {
+      limit = { tyranny < 3.0 }
+      try_create_important_action = {
+        important_action_type = action_low_tyranny_alert
+        actor = root
+      }
+    }
+  }
+
+  effect = {
+  }
+}
+
+action_can_demand_hostage_alert = {
+#  combine_into_one = yes
+  priority = 400
+  type = alert
+  check_create_action = {
+    every_ruler = {
+      limit = {
+        highest_held_title_tier >= root.hostage_tier_check_value
+        current_military_strength >= root.demand_hostage_military_strength_value
+        bp2_valid_hostage_demand_action_trigger = yes
+      }
+      save_scope_as = home_court
+      try_create_important_action = {
+        important_action_type = action_can_demand_hostage_alert
+        actor = root
+        recipient = scope:home_court
+      }
+    }
+  }
+
+  unimportant = {
+    scope:actor = {
+      OR = {
+        has_any_cb_on = scope:recipient
+        has_truce = scope:recipient
+        is_allied_to = scope:recipient
+      }
+    }
+  }
+
+  effect = {
+    scope:recipient = {
+      ordered_close_family_member = {
+        limit = {
+          bp2_valid_to_offer_as_hostage_trigger = { SENDER = scope:recipient }
+          save_temporary_scope_as = their_hostage
+          root = {
+            is_character_interaction_potentially_accepted = {
+              interaction = demand_hostage_interaction
+              recipient = scope:recipient
+              secondary_recipient = scope:their_hostage
+            }
+          }
+        }
+        order_by = {
+          value = 0
+          subtract = age
+        }
+        save_scope_as = secondary_recipient
+      }
+    }
+    open_interaction_window = {
+      interaction = demand_hostage_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+      secondary_recipient = scope:secondary_recipient
+    }
+  }
+}
+
+
+#action_can_build_holdings_for_renown_alert = {
+#  type = alert
+#
+#  check_create_action = {
+#    save_scope_as = actor
+#    every_vassal_or_below = {
+#      limit = { 
+#        is_landed = yes
+#        dynasty = scope:actor.dynasty
+#        highest_held_title_tier => 0
+#      }
+#      save_scope_as = recipient
+#      every_directly_owned_province = {
+#        if = {
+#          limit = {
+#            OR = {
+#              culture = { has_tradition
+#              
+#          }
+#          try_create_important_action = {
+#            important_action_type = action_can_build_holdings_for_renown_alert
+#            actor = root
+#            recipient = scope:army
+#          }
+#        }
+#      }
+#    }
+#  }
+#
+#  effect = {
+##    pan_camera_to_province = scope:army.location
+#    scope:actor = {
+#      open_view_data = {
+#        view = army
+#        recipient = scope:recipient
+#        army = scope:recipient
+#      }          
+#    }
+#  }
+#}
+
+action_army_has_no_commander_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    every_army = {
+      limit = { army_owner = scope:actor }
+      save_scope_as = army
+      if = {
+        limit = {  NOT = { exists = army_commander } }
+
+        try_create_important_action = {
+          important_action_type = action_army_has_no_commander_alert
+          actor = root
+          recipient = scope:army
+        }
+      }
+    }
+  }
+
+  effect = {
+    pan_camera_to_province = scope:army.location
+    scope:actor = { cmdr_initialize = yes }
+    if = {
+      limit = { NOT = { scope:actor = { exists = var:cmdr_army } } }
+      scope:army = {
+        open_view_data = {
+          view = select_commander
+#          recipient = scope:actor
+#          army = scope:army
+        }
+      }          
+    }
+  }
+}
+
+action_can_blackmail_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    every_unspent_known_secret = {
+      save_scope_as = secret
+      every_secret_participant = {
+        save_scope_as = participant
+        scope:secret = {
+          if = {
+            limit = {
+              is_blackmailable_secret_trigger = { BLACKMAILER = scope:actor PARTICIPANT = scope:participant }
+              alert_character_is_worth_blackmailing = { BLACKMAILER = scope:actor PARTICIPANT = scope:participant }
+            }
+            try_create_important_action = {
+              important_action_type = action_can_blackmail_alert
+              actor = scope:actor
+              recipient = scope:participant
+            }
+          }
+        }
+      }
+    }
+  }
+
+  effect = {
+    scope:recipient = {
+      open_view_data = {
+        view = character
+        player = scope:actor
+      }
+    }
+    open_interaction_window = {
+      interaction = blackmail_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+action_can_demand_full_payment_alert = {
+  type = alert
+
+  check_create_action = {
+    every_hooked_character = {
+      limit = {
+        root = {
+          is_character_interaction_potentially_accepted = {
+            recipient = prev
+            interaction = demand_payment_interaction
+          }
+        }
+        gold >= golden_obligation_value
+      }
+      try_create_important_action = {
+        important_action_type = action_can_demand_full_payment_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = demand_payment_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+action_can_ransom_prisoner_full_reward_alert = {
+  type = alert
+
+  check_create_action = {
+    root = { save_scope_as = actor }
+    every_prisoner = {
+      limit = {
+        NOT = { is_at_war_with = root }
+        NOT = { liege ?= root }                 # Can't ransom to self
+        root = {
+          is_character_interaction_potentially_accepted = {
+            recipient = prev
+            interaction = ransom_interaction
+          }
+        }
+        OR = {
+          AND = {                       # if we are a wanderer or a ruler, we have to ransom outselves
+            OR = {
+              is_pool_guest = yes
+              is_ruler = yes
+            }
+            gold >= cmn_ransom_cost
+#            ransom_cost > 10
+          }
+          AND = {                       # if we have a liege, the liege must ransom us
+            is_ruler = no
+            exists = liege
+            OR = {
+              AND = {
+                ransom_cost > 10                    # if the ransom cost is more than 10 only fire if the liege has enough gold to cover it
+                liege.gold >= cmn_ransom_cost
+              }
+              AND = {                               # if the ransom cost is 10 or less, fire if we can get a hook on the liege and liege is not imprisoned
+                ransom_cost <= 10
+                liege.gold >= 50
+                NOT = { scope:actor = { has_hook = PREV.liege } }
+                liege = { is_imprisoned = no }
+              }
+            }  
+          }
+        }
+      }
+      try_create_important_action = {
+        important_action_type = action_can_ransom_prisoner_full_reward_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = ransom_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+
+action_can_change_my_contract_alert = {
+  type = alert
+
+  check_create_action = {
+    if = {
+      limit = {
+        is_independent_ruler = no
+        vassal_contract_is_blocked_from_modification = no
+      }
+      try_create_important_action = {
+        important_action_type = action_can_change_my_contract_alert
+        actor = root
+        recipient = liege
+      }
+    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = vassal_modify_vassal_contract_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+action_wife_not_assisting_alert = {
+  type = alert
+
+  check_create_action = {
+    if = {
+      limit = {
+        exists = primary_spouse
+        NOT = { primary_spouse = { is_performing_council_task = task_spouse_default } }
+      }
+      try_create_important_action = {
+        important_action_type = action_wife_not_assisting_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+#    primary_spouse = { assign_council_task = { council_task = task_spouse_default } }
+  }
+}
+
+action_can_assign_guardian_alert = {
+  type = alert
+
+  check_create_action = {
+    every_courtier = {
+      limit = {
+        is_adult = no
+        num_of_relation_guardian = 0
+        age >= childhood_education_start_age
+        exists = liege
+        liege = root
+        root = {
+          is_character_interaction_valid = {
+            recipient = prev
+            interaction = educate_child_interaction
+          }
+          NOT = {
+            has_character_flag = flag_can_assign_guardian_off
+          }
+        }
+      }
+      if = {
+        limit = {
+          OR = {
+            dynasty = root.dynasty
+            AND = {
+              exists = real_father
+              real_father = root
+            }
+          }
+        }
+        try_create_important_action = {
+          important_action_type = action_can_assign_guardian_alert
+          actor = root
+          recipient = this
+          secondary_recipient = this
+        }
+      }
+    }
+  }
+
+  unimportant = {
+#    scope:recipient = {
+#      any_sibling = { #Not one of your three first kids
+#        is_child_of = root
+#        age > scope:recipient.age
+#        count >= 3
+#      }
+#    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = educate_child_interaction
+      actor = scope:actor
+      recipient = scope:actor
+      secondary_recipient = scope:secondary_recipient
+    }
+  }
+}
+
+action_child_without_focus_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    every_child = {
+      limit = {
+        is_adult = no
+        OR = {
+          has_trait = bossy
+          has_trait = rowdy
+          has_trait = curious
+          has_trait = pensive
+          has_trait = charming 
+        }
+        NOT = { has_any_focus = yes }
+        exists = liege
+        liege = root
+
+        OR = {
+          dynasty = root.dynasty
+          AND = {
+            exists = real_father
+            real_father = root
+          }
+        }
+
+        root = {
+          is_character_interaction_valid = {
+            recipient = prev
+            interaction = educate_child_interaction
+          }
+#          NOT = {
+#            has_character_flag = flag_can_assign_guardian_off
+#          }
+        }
+      }
+      save_scope_as = recipient
+      try_create_important_action = {
+        important_action_type = action_child_without_focus_alert
+        actor = scope:actor
+        recipient = scope:recipient
+        secondary_recipient = scope:recipient
+      }
+    }
+  }
+
+  effect = {
+    scope:recipient = {
+      open_view_data = {
+        view = character
+        player = scope:actor
+      }
+    }
+  }
+}
+
+action_child_can_learn_language_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    every_courtier = {
+      limit = {
+        is_adult = no
+        is_physically_able = yes
+        age >= childhood_education_start_age
+        NOT = { any_scheme = { scheme_type = learn_language } }
+        is_at_home = yes
+        is_close_or_extended_family_of = scope:actor
+
+        OR = {
+          dynasty = root.dynasty
+          AND = {
+            exists = real_father
+            real_father = root
+          }
+        }
+        OR = {
+          is_primary_heir_of = scope:actor
+          is_player_heir_of  = scope:actor
+          num_of_known_languages <= language_soft_cap
+        }
+
+      }
+      save_scope_as = recipient
+      try_create_important_action = {
+        important_action_type = action_child_can_learn_language_alert
+        actor = scope:actor
+        recipient = scope:recipient
+        secondary_recipient = scope:recipient
+      }
+    }
+  }
+
+  effect = {
+    scope:actor = {
+      open_view_data = {
+        view = character
+        player = scope:recipient
+      }
+    }
+    open_interaction_window = {
+      interaction = make_child_learn_language_interaction
+      actor = scope:actor
+      recipient = scope:actor
+      secondary_recipient = scope:recipient
+    }
+  }
+}
+
+action_unused_hostile_schemes_alert = {
+  type = alert
+
+  check_create_action = {
+    if = {
+      limit = { cmn_cur_hostile_schemes < cmn_max_hostile_schemes }
+      try_create_important_action = {
+        important_action_type = action_unused_hostile_schemes_alert
+        actor = root
+      }
+    }
+  }
+
+  effect = {
+    scope:actor = {
+      open_view_data = {
+        view = intrigue_window
+        player = scope:actor
+      }
+    }
+  }
+}
+
+action_unused_personal_schemes_alert = {
+  type = alert
+
+  check_create_action = {
+    if = {
+      limit = { cmn_cur_personal_schemes < cmn_max_personal_schemes }
+      try_create_important_action = {
+        important_action_type = action_unused_personal_schemes_alert
+        actor = root
+      }
+    }
+  }
+  effect = {
+    scope:actor = {
+      yyz_schemeTarget_romance_effect = yes
+      if = {
+        limit = { NOT = { exists = global_var:yyz_list_mode } }
+        open_view_data = {
+          view = intrigue_window
+          player = scope:actor
+        }
+      }
+    }
+  }
+}
+
+action_can_learn_language_alert = {
+  type = alert
+
+  check_create_action = {
+    save_scope_as = actor
+    random_scheme = { 
+      limit = { scheme_type = learn_language }
+      save_scope_as = target
+    }
+    
+    if = {
+      limit = { 
+        OR = {
+          cmn_cur_personal_schemes < cmn_max_personal_schemes
+          AND = {
+            has_perk = adaptive_traditions_perk # +1 language scheme
+            NOT = { exists = scope:target }
+            num_of_known_languages <= language_soft_cap
+          }
+        }
+      }
+
+      try_create_important_action = {
+        important_action_type = action_can_learn_language_alert
+        actor = root
+      }
+    }
+  }
+  effect = {
+    scope:actor = {
+      open_view_data = {
+        view = intrigue_window
+        player = scope:actor
+      }
+    }
+  }
+}
+
+action_can_lawfully_imprison = {
+  type = alert
+
+  check_create_action = {
+    every_courtier = { try_create_lawfully_imprison = yes }
+
+    every_vassal_or_below = {
+      try_create_lawfully_imprison = yes
+      every_courtier = {
+        try_create_lawfully_imprison = yes
+      }
+    }    
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = imprison_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+#action_can_call_ally_alert = {
+#    type = alert
+#
+#  check_create_action = {
+#    every_ally = {
+#      save_temporary_scope_as = ally
+#      if = {
+#        limit = {
+#          prev = {
+#            is_character_interaction_valid = {
+#              recipient = scope:ally
+#              interaction = call_ally_interaction
+#            }
+#          }
+#          root = {
+#            NOT = {
+#              has_character_flag = flag_can_call_ally_off
+#            }
+#          }
+#        }
+#        try_create_important_action = {
+#          important_action_type = action_can_call_ally_alert
+#          actor = root
+#          recipient = scope:ally
+#        }
+#      }
+#    }
+#  }
+#  
+#  effect = {
+#    open_interaction_window = {
+#      interaction = call_ally_interaction
+#      actor = scope:actor
+#      recipient = scope:recipient
+#    }
+#  }
+#}
+
+#action_can_call_house_member = {
+#    type = alert
+#
+#  check_create_action = {
+#    if = {
+#      limit = {
+#        is_house_head = yes
+#      }
+#      house = {
+#        every_house_member = {
+#          save_temporary_scope_as = member
+#          if = {
+#            limit = {
+#              root = {
+#                is_character_interaction_valid = {
+#                  recipient = scope:member
+#                  interaction = call_house_member_to_war_interaction
+#                }
+#              }
+#            }
+#            try_create_important_action = {
+#              important_action_type = action_can_call_house_member
+#              actor = root
+#              recipient = scope:member
+#            }
+#          }
+#        }
+#      }
+#    }
+#  }
+#  
+#  effect = {
+#    open_interaction_window = {
+#      interaction = call_house_member_to_war_interaction
+#      actor = scope:actor
+#      recipient = scope:recipient
+#    }
+#  }
+#}
+
+#action_can_call_dynasty_member = {
+#    type = alert
+#
+#  check_create_action = {
+#    if = {
+#      limit = {
+#        is_dynast = yes
+#      }
+#      dynasty = {
+#        every_dynasty_member = {
+#          save_temporary_scope_as = member
+#          if = {
+#            limit = {
+#              root = {
+#                is_character_interaction_valid = {
+#                  recipient = scope:member
+#                  interaction = call_dynasty_member_to_war_interaction
+#                }
+#              }
+#            }
+#            try_create_important_action = {
+#              important_action_type = action_can_call_dynasty_member
+#              actor = root
+#              recipient = scope:member
+#            }
+#          }
+#        }
+#      }
+#    }
+#  }
+#  
+#  effect = {
+#    open_interaction_window = {
+#      interaction = call_dynasty_member_to_war_interaction
+#      actor = scope:actor
+#      recipient = scope:recipient
+#    }
+#  }
+#}
+
+#action_not_enough_knights_alert = {
+#  type = alert
+#
+#  check_create_action = {
+#    if = {
+#      limit = {
+#        max_number_of_knights > root.number_of_knights
+#        root = {
+#          NOT = {
+#            has_character_flag = flag_not_enough_knights_off
+#          }
+#        }
+#      }
+#      try_create_important_action = {
+#        important_action_type = action_not_enough_knights_alert
+#        actor = root
+#      }
+#    }
+#  }
+#  effect = {
+#    root = {
+#      open_view = military
+#      open_view = knights
+#    }
+#  }
+#}
+
+#action_take_decision = {
+#  type = alert
+#
+#  check_create_action = {
+#    # already filtered to only important decisions
+#
+#    try_create_important_action = {
+#      important_action_type = action_take_decision
+#    }
+#  }
+#
+#  effect = {
+#    scope:decision_type = {
+#      open_view_data = decision_detail
+#    }
+#  }
+#}
+
+action_empty_physician_position = { # nice rhyme
+  type = alert
+
+  check_create_action = {
+    if = {
+      limit = {
+        has_character_flag = flag_no_physician
+        NOT = {
+          has_character_flag = flag_empty_physician_position_off
+        }
+      }
+      try_create_important_action = {
+        important_action_type = action_empty_physician_position
+        actor = root
+      }
+    }
+  }
+  
+  effect = {
+    root = {
+      open_view = court_window
+    }
+  }
+}
+
+#action_truce_expiring = {
+#  type = alert
+#  
+#  check_create_action = {
+#    every_truce_target = {
+#      save_temporary_scope_as = truce_target
+#      if = {
+#        limit = {
+#          scope:truce_target = {
+#            NOT = { has_character_flag = has_truce_flag }
+#            is_landed = yes
+#          }
+#          root = {
+#            NOT = {
+#              has_character_flag = flag_truce_expiring_off
+#            }
+#          }
+#        }
+#        try_create_important_action = {
+#          important_action_type = action_truce_expiring
+#          actor = root
+#          recipient = scope:truce_target
+#        }
+#      }
+#    }
+#  }
+#  
+#  effect = {
+#    scope:recipient = {
+#      open_view_data = {
+#        view = character
+#      }
+#    }
+#  }
+#}
+
+#action_truce_expiring_grouped = {
+#  type = alert
+#  
+#  check_create_action = {
+#    every_truce_target = {
+#      save_temporary_scope_as = truce_target
+#      if = {
+#        limit = {
+#          AND = {
+#            scope:truce_target = {
+#              NOT = { has_character_flag = has_truce_flag }
+#              is_landed = yes
+#            }
+#            root = {
+#              any_truce_target = {
+#                has_character_flag = has_truce_flag
+#                count >= 5
+#              }
+#            }
+#          }
+#        }
+#        try_create_important_action = {
+#          important_action_type = action_truce_expiring_grouped
+#          actor = root
+#        }
+#      }
+#    }
+#  }
+#  
+#  effect = {
+#    scope:actor = {
+#      open_view_data = {
+#        view = character
+#      }
+#    }
+#  }
+#}
+
+action_hook_expiring_alert = {
+  type = alert
+  check_create_action = {
+    every_hooked_character = {
+      limit = {
+        root = {
+          time_to_hook_expiry = {
+            target = prev
+            value < 90
+          }
+          NOT = {
+            has_character_flag = flag_hook_expiring_off
+          }
+        }
+      }
+      try_create_important_action = {
+        important_action_type = action_hook_expiring_alert
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    scope:recipient = {
+      open_view_data = {
+        view = character
+      }
+    }
+  }
+}
+
+action_can_vassalize_alert = {
+  type = alert
+  check_create_action = {
+#    every_neighboring_top_liege_realm_owner = {
+#      limit = {
+#        root = {
+#          is_character_interaction_potentially_accepted = {
+#            recipient = prev
+#            interaction = offer_vassalization_interaction
+#          }
+#          NOT = {
+#            has_character_flag = flag_can_vassalize_off
+#          }
+#        }
+#      }
+#      try_create_important_action = {
+#        important_action_type = action_can_vassalize_alert
+#        actor = root
+#        recipient = this
+#      }
+#    }
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = offer_vassalization_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+action_can_vassalize = {
+  priority = 900
+  combine_into_one = yes
+  check_create_action = {
+    every_neighboring_top_liege_realm_owner = {
+      limit = {
+        root = {
+          is_character_interaction_potentially_accepted = {
+            recipient = prev
+            interaction = offer_vassalization_interaction
+          }
+          has_character_flag = flag_can_vassalize_off
+        }
+      }
+      try_create_important_action = {
+        important_action_type = action_can_vassalize
+        actor = root
+        recipient = this
+      }
+    }
+    
+  }
+
+  effect = {
+    open_interaction_window = {
+      interaction = offer_vassalization_interaction
+      actor = scope:actor
+      recipient = scope:recipient
+    }
+  }
+}
+
+action_being_sieged = {
+  type = alert
+  check_create_action = {
+    every_war_enemy = {
+      limit = {
+        any_army = {
+          is_army_in_siege_relevant_for = root
+          is_army_in_combat = no
+        }
+        root = { NOT = {  has_character_flag = flag_being_sieged_off } }
+      }
+      try_create_important_action = {
+        important_action_type = action_being_sieged
+        actor = root
+        recipient = this
+      }
+    }
+  }
+
+  effect = {
+    scope:recipient = {
+      random_army = {
+        limit = { is_army_in_siege_relevant_for = root }
+        pan_camera_to_province = location
+      }
+    }
+  }
+}
+
+action_can_play_chess = {
+  type = alert
+  check_create_action = {
+    if = {
+      limit = {
+        always = no  # mod - no way to legitimately check cooldown, disabling this alert for now
+
+        # Actor needs to either have a CulTrad or be a fan of board games
+        OR = {
+          culture = { has_cultural_parameter = may_challenge_to_board_games }
+          has_perk = befriend_perk
+        }
+        # Plus be able to start & continue such a game generally.
+        bg_can_start_board_game_trigger = yes
+        is_available = yes
+        can_start_board_game_eligibility_checks_trigger = yes
+        NOT = { has_character_flag = cmn_board_game_cooldown }
+      }
+      try_create_important_action = {
+        important_action_type = action_can_play_chess
+        actor = root
+        recipient = root
+        secondary_recipient = root
+      }
+    }
+  }
+  effect = { 
+    scope:actor = { 
+      open_view_data = {
+        view = character
+        player = scope:actor
+      } 
+    } 
+  }
+}

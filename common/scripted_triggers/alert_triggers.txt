@@ -1,0 +1,35 @@
+﻿
+alert_has_curable_disease = {
+  OR = {
+    has_trait = ill
+    has_trait = measles
+    has_trait = dysentery
+    has_trait = bubonic_plague
+    has_trait = cancer
+    has_trait = typhus
+    has_trait = pneumonic
+    has_trait = wounded_1
+    has_trait = wounded_2
+    has_trait = wounded_3
+    has_trait = consumption
+    has_trait = gout_ridden
+    has_trait = ergotism
+    has_trait = great_pox
+    has_trait = smallpox
+    has_character_modifier = poisonous_gold_modifier
+    has_character_modifier = infected_wound_modifier  # shouldn't be necessary since one of the wounded traits should appear as well
+    has_character_modifier = emaciated_modifier
+  }
+}
+
+##################################################
+# scope:actor  = player
+# scope:secret = the target secret
+alert_character_is_worth_blackmailing = {
+  AND = { 
+    $BLACKMAILER$ = { has_perk = golden_obligations_perk }   # can we demand gold
+    $PARTICIPANT$.gold > 9                                   # do they have gold
+    $PARTICIPANT$ = { is_imprisoned = no }                   # not in prison
+  }                  
+}
+

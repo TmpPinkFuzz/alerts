@@ -1,0 +1,149 @@
+﻿l_english:
+
+ zzz:0 ""
+ zzz_desc:0 "[recipient.GetShortUIName] \n\n#help .#!"
+ zzz_click:0 "#I Click to #!"
+
+ action_can_change_my_contract_alert:0 "Can Change Feudal Contract"
+ action_can_change_my_contract_alert_desc:0 "Your feudal contract with your liege [actor.GetLiege.GetShortUIName] can be changed. \n\n#help .#!"
+ action_can_change_my_contract_alert_click:0 "#I Click to negotiate the new terms.#!"
+
+ action_low_tyranny_alert:0 "Low Tyranny"
+ action_low_tyranny_alert_desc:0 "Your tyranny will soon decay to 0 \n\n#help With your tyranny so low this would be an opportune time to imprison or revoke the title of someone without a legitimate reason. #!"
+ action_low_tyranny_alert_click:0 ""
+
+ action_can_request_promote_legend_alert:0 "Can request Legend Promoter"
+ action_can_request_promote_legend_alert_desc:0 "You are able to ask someone to Promote your Legend."
+ action_can_request_promote_legend_alert_label:0 ""
+ action_can_request_promote_legend_alert_click:0 "#I Click to open the Find Legend Promoter screen if TheHeadHunter mod is installed#!"
+
+ action_acquired_construction_alert:0 "Acquired ongoing construction"
+ action_acquired_construction_alert_desc:0 "Recently acquired province [province.GetName] has construction underway."
+ action_acquired_construction_alert_label:0 ""
+ action_acquired_construction_alert_click:0 "#I Click to go view [province.GetName]#!"
+
+ action_can_join_finishing_war_alert:0 "Joinable war finishing"
+ action_can_join_finishing_war_alert_desc:0 "The war between [recipient.GetShortUIName] and [secondary_recipient.GetShortUIName] is about to complete.\n\nYou can join the war to get the ally or liege opinion bonus without having to participate."
+ action_can_join_finishing_war_alert_label:0 ""
+ action_can_join_finishing_war_alert_click:0 "#I Click to Offer to Join War #!"
+
+ action_old_gold_health_alert:0 ""
+ action_old_gold_health_alert_desc:0 "[recipient.GetShortUIName] of [recipient.GetPrimaryTitle.GetNameNoTier]\n\n Health: [recipient.GetHealth|1] Gold: [recipient.GetGold|0]"
+ action_old_gold_health_alert_label:0 ""
+ action_old_gold_health_alert_click:0 "#I Click to go to this character#!"
+
+ action_land_sick_gold_alert:0 ""
+ action_land_sick_gold_alert_desc:0 "[recipient.GetShortUIName] is unhealthy due to disease.\n\n Health: [recipient.GetHealth|1] Gold: [recipient.GetGold|0]"
+ action_land_sick_gold_alert_label:0 ""
+ action_land_sick_gold_alert_click:0 "#I Click to #!"
+ 
+ action_land_old_gold_alert:0 ""
+ action_land_old_gold_alert_desc:0 "[recipient.GetShortUIName] is unhealthy due to age.\n\n Health: [recipient.GetHealth|1] Gold: [recipient.GetGold|0]"
+ action_land_old_gold_alert_label:0 ""
+ action_land_old_gold_alert_click:0 "#I Click to #!"
+ 
+ action_sieging_army_has_no_military_engineer_alert:0 "[army|EU] sieging without a [GetTrait('military_engineer').GetName( GetNullCharacter )] commander."
+ action_sieging_army_has_no_military_engineer_alert_desc:0 "Your [army|E] could complete the siege sooner if you assigned a commander with the [GetTrait('military_engineer').GetName( GetNullCharacter )] trait to it."
+ action_sieging_army_has_no_military_engineer_alert_click:0 "#I Click to pan to the army location and view the army detail panel to assign a new commander#!"
+ 
+ action_moving_army_has_no_organizer_alert:0 "[army|E] moving with no [GetTrait('organizer').GetName( GetNullCharacter )] commanding."
+ action_moving_army_has_no_organizer_alert_desc:0 "Your [army|E] could move faster if you assigned a commander with the [GetTrait('organizer').GetName( GetNullCharacter )] trait to it."
+ action_moving_army_has_no_organizer_alert_click:0 "#I Click to pan to the army location and view the army detail panel to assign a new commander#!"
+
+ action_can_demand_hostage_alert:0 "Can demand hostage"
+ action_can_demand_hostage_alert_desc:0 "[recipient.GetShortUIName] of [recipient.GetPrimaryTitle.GetName] would be willing to send you a hostage."
+ action_can_demand_hostage_alert_label:0 ""
+ action_can_demand_hostage_alert_click:0 "#I Click to negotiage the transaction #!"
+
+ action_empty_physician_position:0 "No [court_physician|E]"
+ action_empty_physician_position_label:0 "You should find a [court_physician|E]"
+ action_empty_physician_position_desc:0 "You have no [court_physician|E]\n\n#help You currently lack a Court Physician, putting you and your courtiers at risk in the event of [illness|E] or injury.#!"
+ action_empty_physician_position_click:0 "#I Click to find a Court Physician#!"
+ 
+ action_truce_expiring:0 "[truce|E] ending soon"
+ action_truce_expiring_label:0 "[truce|E] ending soon"
+ action_truce_expiring_desc:0 "Your [truce|E] with [recipient.GetUIName] ends soon\n\n#help Your [truce|E] with [recipient.GetShortUINameNoTooltip] expires in less than three months, allowing you to declare [war|E] on [recipient.GetHerHim] without penalty.#!"
+ action_truce_expiring_click:0 "#I Click to open [recipient.HerHis] Character View#!"
+ action_truce_expiring_grouped:0 "[truce|E]s ending soon"
+ action_truce_expiring_grouped_label:0 "[truce|E]s ending soon"
+ action_truce_expiring_grouped_desc:0 "You have 5 or more [truce|E]s ending soon\n\n#help You have 5 or more [truce|E]s expiring in less than three months, allowing you to declare [war|E] on several characters without penalty.#!"
+ action_truce_expiring_grouped_click:0 "#I Click to open your diplomacy window#!"
+
+ action_army_has_no_commander_alert:0 "Army without a [commander|E]."
+# action_army_has_no_commander_alert_label:0 "No [court_physician|E]"
+ action_army_has_no_commander_alert_desc:0 "You have an [army|El] without a commander.\n\n#help An army without a commander receives no bonuses to [advantage|El], movement, or siege. You should assign a commander to this army as soon as possible to enhance its abilities.#!"
+ action_army_has_no_commander_alert_click:0 "#I Click to focus the map on the army#!"
+ 
+ action_being_sieged:0 "Under [siege|E]"
+ action_being_sieged_label:0 "Under [siege|E]"
+ action_being_sieged_desc:0 "[armies|E] of [recipient.GetShortUIName] sieging your [holdings|E]\n\n#help Defeat the besieging army in [battle|E] to prevent [occupation|E] and loss of [county_control|E].#!"
+ action_being_sieged_click:0 "#I Click to go to Besieging Army#!"
+ 
+ action_hook_expiring_alert:0 "Hook expiring soon"
+ action_hook_expiring_alert_desc:0 "You should spend the [hook|E] you have on [recipient.GetUIName] soon, or it will expire on [actor.GetHookOn( recipient.Self ).GetExpirationDate.GetString]."
+ action_hook_expiring_alert_label:0 "Your [hook|E] on [recipient.GetShortUINameNoTooltip] will soon expire"
+ action_hook_expiring_alert_click:0 "#I Click to open Character View#!"
+ 
+ action_can_vassalize_alert:0 "Neighbor can be Vassalized"
+ action_can_vassalize_alert_desc:1 "A neighboring [ruler|E], [recipient.GetUIName], wishes for your protection and would accept [vassalization|E].$action_can_vassalize_HELP$"
+ action_can_vassalize_alert_label:0 "You can Vassalize [recipient.GetShortUINameNoTooltip]"
+ action_can_vassalize_alert_click:0 "#I Click to Offer Vassalage#!"
+ action_can_vassalize_alert_HELP:0 "\n\n#help Weak [independent|E] Rulers may seek your protection and ask to become your [vassal|E]. Expanding your [realm|E] without going to [war|E] is virtually always beneficial.#!"
+
+ action_can_assign_guardian_alert:0 "Guardian can be assigned"
+ action_can_assign_guardian_alert_desc:2 "You can designate a [guardian|E] for [recipient.GetShortUIName].$action_can_assign_guardian_HELP$"
+ action_can_assign_guardian_alert_label:1 "You can designate a guardian for [recipient.GetShortUINameNoTooltip]"
+ action_can_assign_guardian_alert_click:0 "#I Click to designate a [guardian|E]#!"
+ action_can_assign_guardian_alert_HELP:0 "\n\n#help Your children can be assigned a Guardian, who will transfer their [skills|E] and other knowledge to the child. A Guardian with a good [education_trait|E] will transfer it to the child, while letting a [vassal|E] educate your child will raise their [opinion|E] of you. If you want more control, you can educate the child yourself. #!"
+
+ action_can_call_ally_alert:1 "You can call Ally"
+ action_can_call_ally_alert_desc:2 "You can call your [ally|E] [recipient.GetUIName] to your [wars|E].$CALL_TO_WAR_HELP$"
+ action_can_call_ally_alert_label:2 "You can call on your Ally [recipient.GetShortUINameNoTooltip]"
+ action_can_call_ally_alert_click:0 "#I Click to call Ally#!"
+
+ action_not_enough_knights_alert:1 "Few $knight_culture_player_plural_no_tooltip$"
+ action_not_enough_knights_alert_label:2 "Few $knight_culture_player_plural_no_tooltip$"
+ action_not_enough_knights_alert_desc:3 "You do not have the maximum number of $knight_culture_player_plural$ employed.\n\n#help While it is not necessary to have the maximum amount of $knight_culture_player_plural_no_tooltip$, a $knight_culture_player_no_tooltip$ with high [prowess|E] will make a large difference in [battles|E].\n\nGain more and $knight_culture_player_plural_no_tooltip$ by either recruiting existing [guests|E] at your [court|E], or send out the word that you are looking for $knight_culture_player_plural_no_tooltip$.#!"
+ action_not_enough_knights_alert_click:1 "#I Click to view your Military#!"
+
+ action_can_learn_language_alert:0 "Learn language"
+ action_can_learn_language_alert_desc:0 "You can learn a new language"
+# action_can_learn_language_alert_click:0 "#I Click to select a tutor #!"
+ action_can_learn_language_alert_click:0 ""
+
+ action_child_can_learn_language_alert:0 "Learn language"
+ action_child_can_learn_language_alert_desc:0 "[recipient.GetUIName] can learn a new language"
+ action_child_can_learn_language_alert_click:0 "#I Click to select a tutor #!"
+
+ action_unused_hostile_schemes_alert:0 "Hostile [scheme|E] available"
+ action_unused_hostile_schemes_alert_label:0 ""
+ action_unused_hostile_schemes_alert_desc:0 "You have one or more hostile scheme slots that are not in use.\n\n#help Use hostile schemes to murder your opposition, [hook|E] characters to get them to do your will, or abduct them to make them your prisoner.#!"
+ action_unused_hostile_schemes_alert_click:0 "#I Click to open the intrigue window.#!"
+
+ action_unused_personal_schemes_alert:0 "Personal [scheme|E] available"
+ action_unused_personal_schemes_alert_label:0 ""
+ action_unused_personal_schemes_alert_desc:0 "You have one or more personal scheme slots that are not in use.\n\n#help Personal schemes allow you to interact directly with another individual to Sway their opinion of you, Seduce them to be your lover, or even Romance them to be your life long soulmate. You may also learn their language or induct them into the ways of witchcraft. #!"
+ action_unused_personal_schemes_alert_click:0 "#I Click to open the intrigue window.#!"
+
+ action_child_without_focus_alert:0 "Focus can be set"
+ action_child_without_focus_alert_desc:2 "You can set the education focus for for [recipient.GetShortUIName].$action_can_assign_guardian_HELP$"
+ action_child_without_focus_alert_label:1 "You can set a focus for [recipient.GetShortUINameNoTooltip]"
+ action_child_without_focus_alert_click:0 "#I Click to set a focus#!"
+ action_child_without_focus_alert_HELP:0 "\n\n#help Your children can be assigned a focus.#!"
+
+ action_can_blackmail_alert:0 "Character can be Blackmailed"
+ action_can_blackmail_alert_desc:1 "You can blackmail [recipient.GetUIName]"
+ action_can_blackmail_alert_label:0 "You can blackmail [recipient.GetShortUINameNoTooltip]"
+ action_can_blackmail_alert_click:0 "#I Click to blackmail [recipient.GetShortUINameNoTooltip]#!"
+ action_can_blackmail_alert_HELP:0 "\n\n#help ...#!"
+
+ action_can_ransom_prisoner_full_reward_alert:0 "Can ransom prisoner for full reward"
+ action_can_ransom_prisoner_full_reward_alert_desc:1 "You can ransom [recipient.GetUIName] for their full reward value"
+ action_can_ransom_prisoner_full_reward_alert_label:0 "You can ransom [recipient.GetShortUINameNoTooltip]"
+ action_can_ransom_prisoner_full_reward_alert_click:0 "#I Click to ransom#!"
+
+ action_can_demand_full_payment_alert:0 "Can demand full payment for hook"
+ action_can_demand_full_payment_alert_desc:1 "[recipient.GetUIName] has enough gold to pay off your hook"
+ action_can_demand_full_payment_alert_label:0 "You can demand full payment from [recipient.GetShortUINameNoTooltip]"
+ action_can_demand_full_payment_alert_click:0 "#I Click to demand payment#!"
+

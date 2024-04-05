@@ -1,0 +1,89 @@
+﻿
+#################################################################################
+# common values shared across multiple mods
+
+cmn_ransom_cost = {
+  value = ransom_cost_value
+  if = { 
+    limit = {
+      scope:actor = {
+        exists = dynasty
+        dynasty = { has_dynasty_perk = fp1_pillage_legacy_3 }
+      }
+    }
+    value = increased_ransom_cost_value
+  }
+}
+
+cmn_cur_hostile_schemes = {
+  value = 0
+  every_scheme = {
+    limit = { is_hostile = yes }
+    add = 1
+  }
+}
+
+cmn_max_hostile_schemes = {
+  value = 0
+  if = {
+    limit = { age > 12 }
+    add = 1
+  }
+  if = {
+    limit = { has_perk = twice_schemed_perk }
+    add = 1
+  }
+  if = {
+    limit = {
+      court_grandeur_current_level >= 10
+      has_court_type = court_intrigue
+    }
+    add = 1
+  }
+}
+
+cmn_cur_personal_schemes = {
+  value = 0
+  every_scheme = {
+    limit = { is_hostile = no }
+    add = 1
+  }
+}
+
+cmn_lang = {
+  value = 0
+  add = num_of_known_languages
+}
+
+cmn_max_personal_schemes = {
+  value = 0
+  if = {
+    limit = { age > 11 }                              # child threshold
+    add = 1
+  }
+  if = {
+    limit = {
+      has_perk = adaptive_traditions_perk             # +1 language scheme if we are not at/above our limit of languages
+      num_of_known_languages < language_soft_cap
+    }
+    add = 1
+  }
+  if = {
+    limit = {
+      court_grandeur_current_level >= 10              # royal court bonus
+      has_court_type = court_diplomatic
+    }
+    add = 1
+  }
+  every_artifact = {
+    limit = {
+      artifact_owner = root
+      is_equipped = yes
+      OR = {
+        has_artifact_modifier = vinaya_pitaka_modifier  # +1 sway scheme 
+        has_artifact_modifier = david_harp_modifier     # +1 romance scheme
+      }
+    }
+    add = 1
+  }  
+}
